@@ -1,7 +1,9 @@
 //! This module provide functions for 2d tile map
 
-pub mod pathfinding;
-pub mod shape;
+mod pathfinding;
+mod shape;
+pub use pathfinding::*;
+pub use shape::*;
 
 use serde::{Deserialize, Serialize};
 
