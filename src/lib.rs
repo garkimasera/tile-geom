@@ -118,6 +118,38 @@ impl fmt::Display for Coords {
     }
 }
 
+impl std::str::FromStr for Coords {
+    type Err = CoordsParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut s = s.split(',');
+        let x: i32 = if let Some(s0) = s.next() {
+            s0.parse()?
+        } else {
+            return Err(CoordsParseError::InvalidInput);
+        };
+        let y: i32 = if let Some(s1) = s.next() {
+            s1.parse()?
+        } else {
+            return Err(CoordsParseError::InvalidInput);
+        };
+
+        if s.next().is_some() {
+            return Err(CoordsParseError::InvalidInput);
+        }
+
+        Ok(Coords(x, y))
+    }
+}
+
+#[derive(thiserror::Error, Debug)]
+pub enum CoordsParseError {
+    #[error("{0}")]
+    ParseIntError(#[from] std::num::ParseIntError),
+    #[error("")]
+    InvalidInput,
+}
+
 /// Base type for 2D map
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Array2d<T> {
