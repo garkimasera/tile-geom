@@ -627,26 +627,54 @@ impl Iterator for SpiralIter {
     }
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
-    #[test]
-    fn test() {
-        let v: Vec<_> = SpiralIter::new((0, 0)).take(9).collect();
-        assert_eq!(
-            v,
-            &[
-                Coords(0, 0),
-                Coords(0, 1),
-                Coords(1, 1),
-                Coords(1, 0),
-                Coords(1, -1),
-                Coords(0, -1),
-                Coords(-1, -1),
-                Coords(-1, 0),
-                Coords(-1, 1),
-            ],
-        );
+/// Cyclic modes
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
+pub enum CyclicMode {
+    None,
+    X,
+    Y,
+    XY,
+}
+
+impl CyclicMode {
+    pub fn convert_coords<T: Into<Coords>>(&self, size: (u32, u32), coords: T) -> Option<Coords> {
+        let Coords(x, y) = coords.into();
+        let (nx, ny) = (size.0 as i32, size.1 as i32);
+
+        let x = if matches!(self, CyclicMode::X | CyclicMode::XY) {
+            let x = if x < 0 {
+                (x + nx * (-(x / nx) + 1)) % nx
+            } else if x >= nx {
+                x % nx
+            } else {
+                x
+            };
+            Some(x)
+        } else if x < 0 || x >= nx {
+            None
+        } else {
+            Some(x)
+        };
+        let y = if matches!(self, CyclicMode::Y | CyclicMode::XY) {
+            let y = if y < 0 {
+                (y + ny * (-(y / ny) + 1)) % ny
+            } else if y >= ny {
+                y % ny
+            } else {
+                y
+            };
+            Some(y)
+        } else if y < 0 || y >= ny {
+            None
+        } else {
+            Some(y)
+        };
+
+        if let (Some(x), Some(y)) = (x, y) {
+            Some(Coords(x, y))
+        } else {
+            None
+        }
     }
 }
 
@@ -816,7 +844,54 @@ pub fn dir_by_2pos(p1: Coords, p2: Coords) -> Direction {
     )
 }
 
-#[test]
-fn dir_2pos_test() {
-    assert_eq!(dir_by_2pos(Coords(1, 1), Coords(2, 2)), Direction::SE);
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test() {
+        let v: Vec<_> = SpiralIter::new((0, 0)).take(9).collect();
+        assert_eq!(
+            v,
+            &[
+                Coords(0, 0),
+                Coords(0, 1),
+                Coords(1, 1),
+                Coords(1, 0),
+                Coords(1, -1),
+                Coords(0, -1),
+                Coords(-1, -1),
+                Coords(-1, 0),
+                Coords(-1, 1),
+            ],
+        );
+    }
+
+    #[test]
+    fn convert_cyclic_test() {
+        let size = (3, 4);
+
+        assert_eq!(
+            CyclicMode::None.convert_coords(size, (1, 1)),
+            Some(Coords(1, 1)),
+        );
+        assert_eq!(CyclicMode::None.convert_coords(size, (5, 1)), None,);
+        assert_eq!(
+            CyclicMode::X.convert_coords(size, (5, 1)),
+            Some(Coords(2, 1)),
+        );
+        assert_eq!(CyclicMode::X.convert_coords(size, (5, 5)), None,);
+        assert_eq!(
+            CyclicMode::XY.convert_coords(size, (5, 5)),
+            Some(Coords(2, 1)),
+        );
+        assert_eq!(
+            CyclicMode::XY.convert_coords(size, (-1, -1)),
+            Some(Coords(2, 3)),
+        );
+    }
+
+    #[test]
+    fn dir_2pos_test() {
+        assert_eq!(dir_by_2pos(Coords(1, 1), Coords(2, 2)), Direction::SE);
+    }
 }
