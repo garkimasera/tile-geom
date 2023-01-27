@@ -33,6 +33,11 @@ impl Coords {
         (self.0 - another.0).abs() + (self.1 - another.1).abs()
     }
 
+    /// Calculate Chebyshev distance between two points
+    pub fn cdistance(self, another: Coords) -> i32 {
+        (self.0 - another.0).abs().max((self.1 - another.1).abs())
+    }
+
     /// Calculate square of distance between two points
     pub fn distance2(self, another: Coords) -> f32 {
         let x = (self.0 - another.0) as f32;
@@ -581,6 +586,37 @@ impl Iterator for MDistRangeIter {
             }
         }
         None
+    }
+}
+
+/// Iterate around center, and the range is chebyshev distance
+#[derive(Clone, Copy, PartialEq)]
+pub struct CDistRangeIter {
+    center: Coords,
+    r: i32,
+    rectiter: RectIter,
+}
+
+impl CDistRangeIter {
+    pub fn new<V: Into<Coords>>(center: V, r: i32) -> CDistRangeIter {
+        assert!(r >= 0);
+        let center = center.into();
+
+        let top_left = Coords(center.0 - r, center.1 - r);
+        let right_bottom = Coords(center.0 + r, center.1 + r);
+
+        CDistRangeIter {
+            center,
+            r,
+            rectiter: RectIter::new(top_left, right_bottom),
+        }
+    }
+}
+
+impl Iterator for CDistRangeIter {
+    type Item = (i32, Coords);
+    fn next(&mut self) -> Option<(i32, Coords)> {
+        self.rectiter.next().map(|p| (self.center.cdistance(p), p))
     }
 }
 
