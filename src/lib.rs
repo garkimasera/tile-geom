@@ -272,6 +272,10 @@ where
         }
         a
     }
+
+    pub fn fill(&mut self, value: T) {
+        self.v.fill(value)
+    }
 }
 
 impl<T> Index<(u32, u32)> for Array2d<T> {
