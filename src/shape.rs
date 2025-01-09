@@ -1,19 +1,14 @@
 use crate::Coords;
 use serde::{Deserialize, Serialize};
 
-#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Debug, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Default, Debug, Serialize, Deserialize)]
 pub enum ShapeKind {
+    #[default]
     OneTile,
     Line,
     Circle,
     // Sector,
     // All,
-}
-
-impl Default for ShapeKind {
-    fn default() -> Self {
-        ShapeKind::OneTile
-    }
 }
 
 #[derive(PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Debug, Serialize, Deserialize)]

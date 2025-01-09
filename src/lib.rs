@@ -718,8 +718,9 @@ impl CyclicMode {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq, Eq, Default, Debug, Serialize, Deserialize)]
 pub enum HDirection {
+    #[default]
     None,
     Left,
     Right,
@@ -746,14 +747,9 @@ impl HDirection {
     }
 }
 
-impl Default for VDirection {
-    fn default() -> VDirection {
-        VDirection::None
-    }
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug, Serialize, Deserialize)]
+#[derive(Clone, Copy, PartialEq, Eq, Default, Debug, Serialize, Deserialize)]
 pub enum VDirection {
+    #[default]
     None,
     Up,
     Down,
@@ -777,12 +773,6 @@ impl VDirection {
     #[inline]
     pub fn is_none(&self) -> bool {
         *self == VDirection::None
-    }
-}
-
-impl Default for HDirection {
-    fn default() -> HDirection {
-        HDirection::None
     }
 }
 
