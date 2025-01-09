@@ -884,6 +884,22 @@ pub fn dir_by_2pos(p1: Coords, p2: Coords) -> Direction {
     )
 }
 
+#[rustfmt::skip]
+pub const CHEBYSHEV_DISTANCE_1_COORDS: &[Coords] = &[
+    Coords(-1, -1), Coords(0, -1), Coords(1, -1),
+    Coords(-1,  0),                Coords(1,  0),
+    Coords(-1,  1), Coords(0,  1), Coords(1,  1),
+];
+
+#[rustfmt::skip]
+pub const CHEBYSHEV_DISTANCE_2_COORDS: &[Coords] = &[
+    Coords(-2, -2), Coords(-1, -2), Coords(0, -2), Coords(1, -2), Coords(2, -2),
+    Coords(-2, -1),                                               Coords(2, -1),
+    Coords(-2,  0),                                               Coords(2,  0),
+    Coords(-2,  1),                                               Coords(2,  1),
+    Coords(-2,  2), Coords(-1,  2), Coords(0,  2), Coords(1,  2), Coords(2,  2),
+];
+
 #[cfg(test)]
 mod test {
     use super::*;
