@@ -5,6 +5,8 @@ mod shape;
 pub use pathfinding::*;
 pub use shape::*;
 
+mod rayon;
+
 use serde::{Deserialize, Serialize};
 
 use std::fmt;
@@ -54,6 +56,13 @@ impl Coords {
             let diff_y = (self.1 - another.1).abs();
             (diff_x == 0 || diff_x == 1) && (diff_y == 0 || diff_y == 1)
         }
+    }
+
+    /// Calculate from index and size (width, height)
+    pub fn from_index_size(index: usize, size: (u32, u32)) -> Self {
+        let x = index as u32 % size.0;
+        let y = index as u32 / size.0;
+        Self(x as i32, y as i32)
     }
 }
 

@@ -1,10 +1,11 @@
 [package]
 name = "tile-geom"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 authors = ["T. Okubo <t.okubo.rx78+devel@gmail.com>"]
 license = "MIT"
 
 [dependencies]
+rayon = "1.10.0"
 serde = { version = "1", features = ["derive"] }
 thiserror = "1"
