@@ -206,11 +206,12 @@ impl<T> Array2d<T> {
         }
     }
 
-    pub fn iter(&self) -> Array2dIter<'_, T> {
-        Array2dIter {
-            array: self,
-            rectiter: RectIter::new((0, 0), (self.w - 1, self.h - 1)),
-        }
+    pub fn iter(&self) -> std::slice::Iter<'_, T> {
+        self.v.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<'_, T> {
+        self.v.iter_mut()
     }
 
     pub fn iter_with_idx(&self) -> Array2dIterWithIdx<'_, T> {
@@ -405,23 +406,6 @@ where
         }
         write!(f, "]")?;
         Ok(())
-    }
-}
-
-#[derive(Clone)]
-pub struct Array2dIter<'a, T> {
-    array: &'a Array2d<T>,
-    rectiter: RectIter,
-}
-
-impl<'a, T> Iterator for Array2dIter<'a, T> {
-    type Item = &'a T;
-    fn next(&mut self) -> Option<&'a T> {
-        if let Some(a) = self.rectiter.next() {
-            Some(&self.array[a])
-        } else {
-            None
-        }
     }
 }
 
